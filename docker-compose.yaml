@@ -8,7 +8,8 @@ services:
     restart: always
     tty: true
     volumes:
-      - ./db:/var/lib/mysql
+      - ./mysql/db:/var/lib/mysql
+      - ./mysql/dump:/docker-entrypoint-initdb.d/
     environment:
       - MYSQL_DATABASE=nodedb
       - MYSQL_ROOT_PASSWORD=root
@@ -34,12 +35,12 @@ services:
     image: node:22
     container_name: app
     working_dir: /usr/src/app
+    command: sh -c "npm install && node index.js"
     networks:
       - app-network
     volumes:
       - ./app:/usr/src/app
     tty: true
-    command: node index.js
     depends_on:
       db:
         condition: service_healthy
